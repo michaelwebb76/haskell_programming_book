@@ -12,7 +12,7 @@ triple x = x * 3
 -- 1. Add let to the start of the statement.
 -- 2.
 exerciseTwo :: Integer -> Double
-exerciseTwo x = fromIntegral(x ^ 2) * 3.14
+exerciseTwo x = fromIntegral (x ^ 2) * pi
 
 ----------------------------------------------------------------------------------------------------
 
@@ -74,9 +74,10 @@ exerciseTwo x = fromIntegral(x ^ 2) * 3.14
 
 -- 3.
 waxOn = x * 5
-  where x = y ^ 2
-        y = z + 8
-        z = 7
+ where
+  x = y ^ 2
+  y = z + 8
+  z = 7
 
 -- 6.
 waxOff x = triple x

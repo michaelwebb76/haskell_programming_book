@@ -62,91 +62,92 @@
 module Answers where
 -- Given a type, write the function
 -- 1. i x = x
-  i :: a -> a
-  i a = a
+i :: a -> a
+i a = a
 
 -- 2. c a b = a
-  c :: a -> b -> a
-  c a b = a
+c :: a -> b -> a
+c a b = a
 
 -- 3. c'' b a = b
-  c'' :: b -> a -> b
-  c'' b a = b
+c'' :: b -> a -> b
+c'' b a = b
 -- 4. c' a b = b
-  c' :: a -> b -> b
-  c' a b = b
+c' :: a -> b -> b
+c' a b = b
 -- 5. r a = body a, r a = a :: a
-  r1 :: [a] -> [a]
-  r1 a = tail a
+r1 :: [a] -> [a]
+r1 a = tail a
 
-  r2 :: [a] -> [a]
-  r2 a = a ++ a
+r2 :: [a] -> [a]
+r2 a = a ++ a
 -- 6.
-  co :: (b -> c) -> (a -> b) -> (a -> c)
-  co t0 t1 a = t0 (t1 a)
+co :: (b -> c) -> (a -> b) -> (a -> c)
+co t0 t1 a = t0 $ (t1 a)
 -- 7.
-  a :: (a -> c) -> a -> a
-  a t0 x = x
+a :: (a -> c) -> a -> a
+a t0 x = x
 -- 8.
-  a' :: (a -> b) -> a -> b
-  a' t0 x = t0 x
+a' :: (a -> b) -> a -> b
+a' t0 x = t0 x
 -- Fix it
-  fstString :: [Char] -> [Char]
-  fstString x = x ++ " in the rain"
+fstString :: [Char] -> [Char]
+fstString x = x ++ " in the rain"
 
-  sndString :: [Char] -> [Char]
-  sndString x = x ++ " over the rainbow"
+sndString :: [Char] -> [Char]
+sndString x = x ++ " over the rainbow"
 
-  sing = if (x < y) then fstString x else sndString y
-         where x = "Singin"
-               y = "Somewhere"
+sing = if (x < y) then fstString x else sndString y
+ where
+  x = "Singin"
+  y = "Somewhere"
 
-  main :: IO ()
-  main = do
-    print $ (1 + 2)
-    putStrLn "10"
-    print $ negate (-1)
-    print $ ((+) 0 blah)
-    where blah = negate 1
+main :: IO ()
+main = do
+  print $ (1 + 2)
+  putStrLn "10"
+  print $ negate (-1)
+  print $ ((+) 0 blah)
+  where blah = negate 1
 
-  -- Type Kwan Do
-  -- 1.
-  f :: Int -> String
-  f = undefined
+-- Type Kwan Do
+-- 1.
+f :: Int -> String
+f = undefined
 
-  g :: String -> Char
-  g = undefined
+g :: String -> Char
+g = undefined
 
-  h :: Int -> Char
-  h a = g (f a)
+h :: Int -> Char
+h a = g (f a)
 
-  -- 2.
-  data A
-  data B
-  data C
+-- 2.
+data A
+data B
+data C
 
-  q :: A -> B
-  q = undefined
+q :: A -> B
+q = undefined
 
-  w :: B -> C
-  w = undefined
+w :: B -> C
+w = undefined
 
-  e :: A -> C
-  e a = w (q a)
+e :: A -> C
+e a = w (q a)
 
-  -- 3.
-  data X
-  data Y
-  data Z
+-- 3.
+data X
+data Y
+data Z
 
-  xz :: X -> Z
-  xz = undefined
+xz :: X -> Z
+xz = undefined
 
-  yz :: Y -> Z
-  yz = undefined
+yz :: Y -> Z
+yz = undefined
 
-  xform :: (X, Y) -> (Z, Z)
-  xform(x, y) = (xz x, yz y)
+xform :: (X, Y) -> (Z, Z)
+xform (x, y) = (xz x, yz y)
 
-  munge :: (x -> y) -> (y -> (w, z)) -> x -> w
-  munge a b c = fst(b (a c))
+munge :: (x -> y) -> (y -> (w, z)) -> x -> w
+munge a b c = fst (b (a c))

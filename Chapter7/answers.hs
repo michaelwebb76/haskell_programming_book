@@ -5,7 +5,7 @@ module Answers where
 -- 2. d
 -- 3. a)
 addOneIfOdd n = case odd n of
-  True -> f n
+  True  -> f n
   False -> n
   where f = \n -> n + 1
 -- 3. b)
@@ -22,11 +22,11 @@ mflip f x y = f y x
 -- Exercises: Case Practice
 -- 1.
 functionC x y = case (x > y) of
-  True -> x
+  True  -> x
   False -> y
 -- 2.
 ifEvenAdd2 n = case even n of
-  True -> n + 2
+  True  -> n + 2
   False -> n
 -- 3.
 nums x = case compare x 0 of
@@ -84,15 +84,13 @@ hundredsDigitShortNP :: Integral a => a -> a
 hundredsDigitShortNP = ((flip div 100) . (flip mod 1000))
 -- 2
 foldBoolWithCase :: a -> a -> Bool -> a
-foldBoolWithCase x y b  =
-  case b of
-  True -> x
+foldBoolWithCase x y b = case b of
+  True      -> x
   otherwise -> y
 
 foldBoolWithGuard :: a -> a -> Bool -> a
-foldBoolWithGuard x y b
-  | b == True = x
-  | otherwise = y
+foldBoolWithGuard x y b | b == True = x
+                        | otherwise = y
 -- 3
 g :: (a -> b) -> (a, c) -> (b, c)
 g f (a, c) = (f a, c)

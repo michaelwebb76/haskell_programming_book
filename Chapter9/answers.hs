@@ -1,26 +1,31 @@
 module Answers where
-import Data.Bool
-import Data.Char
+import           Data.Bool
+import           Data.Char
 -- Exercise: EnumFromTo
 eftBool :: Bool -> Bool -> [Bool]
-eftBool c1 c2 = eftUniversal c1 c2
+eftBool = eftUniversal
+
 eftOrd :: Ordering -> Ordering -> [Ordering]
-eftOrd c1 c2 = eftUniversal c1 c2
+eftOrd = eftUniversal
+
 eftInt :: Int -> Int -> [Int]
-eftInt c1 c2 = eftUniversal c1 c2
+eftInt = eftUniversal
+
 eftChar :: Char -> Char -> [Char]
-eftChar c1 c2 = eftUniversal c1 c2
+eftChar = eftUniversal
+
 eftUniversal :: Enum a => a -> a -> [a]
-eftUniversal u1 u2
- | enumU1 == enumU2 = [u1]
- | enumU1 > enumU2 = []
- | otherwise = [u1] ++ eftUniversal (succ u1) u2
- where enumU1 = fromEnum u1
-       enumU2 = fromEnum u2
+eftUniversal u1 u2 | enumU1 == enumU2 = [u1]
+                   | enumU1 > enumU2  = []
+                   | otherwise        = [u1] ++ eftUniversal (succ u1) u2
+ where
+  enumU1 = fromEnum u1
+  enumU2 = fromEnum u2
+
 -- Exercise: Thy Fearful Symmetry
 -- 1.
 myWords :: String -> [String]
-myWords = (flip splitString) ' '
+myWords = flip splitString $ ' '
 -- 2.
 firstSen = "Tyger Tyger, burning bright\n"
 secondSen = "In the forests of the night\n"
@@ -35,18 +40,18 @@ splitString :: String -> Char -> [String]
 splitString "" _ = []
 splitString s d
   | head s == d = splitString (tail s) d
-  | otherwise = (takeWhile (/= d) s) : splitString (dropWhile (/= d) s) d
+  | otherwise   = (takeWhile (/= d) s) : splitString (dropWhile (/= d) s) d
 
+shouldEqual :: [String]
 shouldEqual =
   [ "Tyger Tyger, burning bright"
   , "In the forests of the night"
   , "What immortal hand or eye"
-  , "Could frame thy fearful symmetry?" ]
+  , "Could frame thy fearful symmetry?"
+  ]
 
 main :: IO ()
-main =
-  print $ "Are they equal? "
-          ++ show (myLines sentences == shouldEqual)
+main = print $ "Are they equal? " ++ show (myLines sentences == shouldEqual)
 -- Exercise: Comprehend Thy Lists
 -- let mySqr = [x^2 | x <- [1..5]]
 
@@ -59,9 +64,9 @@ main =
 -- take 5 [ (x, y) | x <- mySqr, y <- mySqr, x < 50, y > 50 ]
 -- []
 -- Exercise: Square Cube
-mySqr = [x^2 | x <- [1..5]]
-myCube = [y^3 | y <- [1..5]]
-mySquareCube = [(x, y) | x <- mySqr, y <- myCube, x < 50, y < 50]
+mySqr = [ x ^ 2 | x <- [1 .. 5] ]
+myCube = [ y ^ 3 | y <- [1 .. 5] ]
+mySquareCube = [ (x, y) | x <- mySqr, y <- myCube, x < 50, y < 50 ]
 mySquareCubeLength = length mySquareCube
 
 -- Exercise: Bottom Madness
@@ -98,29 +103,29 @@ itIsMystery xs = map (\x -> elem x "aeiou") xs
 --   c. [15, 15, 15]
 -- 6.
 makeThreeNegative :: [Int] -> [Int]
-makeThreeNegative [] = []
-makeThreeNegative (x:xs) = (bool (-3) x (x /= 3)) : makeThreeNegative xs
+makeThreeNegative []       = []
+makeThreeNegative (x : xs) = (bool (-3) x (x /= 3)) : makeThreeNegative xs
 
 -- Exercises: Filtering
 howManyMultiplesOfThree :: [Integer] -> Int
 howManyMultiplesOfThree = (length . (filter (\x -> mod x 3 == 0)))
 
 removeArticles :: String -> [String]
-removeArticles "" = []
+removeArticles ""        = []
 removeArticles (' ' : s) = removeArticles s
 removeArticles s
-   | (word == "the" || word == "a" || word == "") = removeArticles restOfSentence
-   | otherwise = word : removeArticles restOfSentence
-   where word = takeWhile (/= ' ') s
-         restOfSentence
-          | dropWhile (/= ' ') s == "" = ""
-          | otherwise = tail (dropWhile (/= ' ') s)
+  | (word == "the" || word == "a" || word == "") = removeArticles restOfSentence
+  | otherwise = word : removeArticles restOfSentence
+ where
+  word = takeWhile (/= ' ') s
+  restOfSentence | dropWhile (/= ' ') s == "" = ""
+                 | otherwise                  = tail (dropWhile (/= ' ') s)
 
 -- Zipping exercises
 myZipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
-myZipWith _ [] _ = []
-myZipWith _ _ [] = []
-myZipWith f (a:as) (b:bs) = (f a b) : myZipWith f as bs
+myZipWith _ []       _        = []
+myZipWith _ _        []       = []
+myZipWith f (a : as) (b : bs) = (f a b) : myZipWith f as bs
 
 myZip :: [a] -> [b] -> [(a, b)]
 myZip a b = myZipWith (\a -> \b -> (a, b)) a b
@@ -131,12 +136,12 @@ onlyUpper :: String -> String
 onlyUpper = filter (isUpper)
 
 firstCharUpper :: String -> String
-firstCharUpper "" = ""
-firstCharUpper (x:xs) = toUpper x : xs
+firstCharUpper ""       = ""
+firstCharUpper (x : xs) = toUpper x : xs
 
 allToUpper :: String -> String
-allToUpper "" = ""
-allToUpper (x:xs) = toUpper x : allToUpper xs
+allToUpper ""       = ""
+allToUpper (x : xs) = toUpper x : allToUpper xs
 
 firstCharOnlyUpper :: String -> Char
 firstCharOnlyUpper = (head . firstCharUpper)
@@ -145,51 +150,46 @@ firstCharOnlyUpper = (head . firstCharUpper)
 -- 1.
 myOr :: [Bool] -> Bool
 myOr [] = False
-myOr (x : xs)
- | x == True = True
- | otherwise = myOr xs
+myOr (x : xs) | x         = True
+              | otherwise = myOr xs
 -- 2.
 myAny :: (a -> Bool) -> [a] -> Bool
 myAny _ [] = False
-myAny f (x : xs)
- | f x == True = True
- | otherwise = myAny f xs
+myAny f (x : xs) | f x       = True
+                 | otherwise = myAny f xs
 -- 3.
 myElem :: Eq a => a -> [a] -> Bool
-myElem a (b:bs)
-  | a == b = True
-  | bs == [] = False
-  | otherwise = myElem a bs
+myElem a (b : bs) | a == b    = True
+                  | bs == []  = False
+                  | otherwise = myElem a bs
 myElemAny :: Eq a => a -> [a] -> Bool
 myElemAny a bs = any (== a) bs
 -- 4.
 myReverse :: [a] -> [a]
-myReverse [] = []
-myReverse (x:xs) = (myReverse xs) ++ [x]
+myReverse []       = []
+myReverse (x : xs) = (myReverse xs) ++ [x]
 -- 5.
 squish :: [[a]] -> [a]
-squish [] = []
-squish (x:xs) = x ++ squish xs
+squish []       = []
+squish (x : xs) = x ++ squish xs
 -- 6.
 squishMap :: (a -> [b]) -> [a] -> [b]
-squishMap _ [] = []
-squishMap f (x:xs) = (f x) ++ squishMap f xs
+squishMap _ []       = []
+squishMap f (x : xs) = (f x) ++ squishMap f xs
 -- 7.
 squishAgain :: [[a]] -> [a]
 squishAgain xs = squishMap (map id) xs
 --8.
 myMaximumBy :: (a -> a -> Ordering) -> [a] -> a
 myMaximumBy _ [] = undefined
-myMaximumBy f (x1 : x2 : xs)
- | f x1 x2 == GT = myMaximumBy f (x1 : xs)
- | otherwise = myMaximumBy f (x2 : xs)
+myMaximumBy f (x1 : x2 : xs) | f x1 x2 == GT = myMaximumBy f (x1 : xs)
+                             | otherwise     = myMaximumBy f (x2 : xs)
 myMaximumBy f (x : xs) = x
 --9.
 myMinimumBy :: (a -> a -> Ordering) -> [a] -> a
 myMinimumBy _ [] = undefined
-myMinimumBy f (x1 : x2 : xs)
- | f x1 x2 == LT = myMinimumBy f (x1 : xs)
- | otherwise = myMinimumBy f (x2 : xs)
+myMinimumBy f (x1 : x2 : xs) | f x1 x2 == LT = myMinimumBy f (x1 : xs)
+                             | otherwise     = myMinimumBy f (x2 : xs)
 myMinimumBy f (x : xs) = x
 
 myMaximum :: (Ord a) => [a] -> a
