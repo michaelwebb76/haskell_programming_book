@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module Chapter10 where
+module HaskellProgrammingChapter10 where
 -- Exercises: Understanding Folds
 -- 1. foldr (*) 1 [1..5]
 --    = (1 * (2 * (3 * (4 * (5 * 1)))))

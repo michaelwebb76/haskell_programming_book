@@ -106,3 +106,13 @@ With record types, each attribute declaration is actually declaring
 a function that will enable you to extract that value from the record.
 I imagine that this would create a lot of naming contention if you're
 not careful.
+
+You can use an as-pattern to refer to the full type while still pulling
+out the constituent parts using pattern matching.
+
+```!haskell
+f :: Show a => (a, b) -> IO (a, b)
+f t@(a, _) = do
+  print a
+  return t
+```
