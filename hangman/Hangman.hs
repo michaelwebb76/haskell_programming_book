@@ -1,4 +1,4 @@
-module Main where
+module Hangman where
 
 import           Control.Monad                  ( forever )
 import           Data.Char                      ( toLower )

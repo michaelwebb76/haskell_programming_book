@@ -1,6 +1,8 @@
 module Answers where
-import Data.List (intersperse)
--- Intermission: Exercise
+
+import           Data.List                      ( intersperse )
+
+  -- Intermission: Exercise
 -- applyTimes 5 (+1) 5 = (+1) . applyTimes (4) (+1) $ 5
 --                     = (+1) . (+1) . applyTimes (3) (+1) $ 5
 --                     = (+1) . (+1) . (+1) applyTimes (2) (+1) $ 5
@@ -49,49 +51,44 @@ import Data.List (intersperse)
 --                   = (7, 1)
 -- 2.
 recursiveSum :: (Eq a, Num a) => a -> a
-recursiveSum x
-  | x == 0 = 0
-  | otherwise = x + recursiveSum(x - 1)
+recursiveSum x | x == 0    = 0
+               | otherwise = x + recursiveSum (x - 1)
 -- 3.
 integralMultiplier :: (Integral a) => a -> a -> a
-integralMultiplier x y
-  | x == 0 = 0
-  | otherwise = y + integralMultiplier (x - 1) y
+integralMultiplier x y | x == 0    = 0
+                       | otherwise = y + integralMultiplier (x - 1) y
 
 -- Fixing dividedBy
 data DividedResult = Result Integer | DividedByZero deriving Show
 dividedBy :: Integer -> Integer -> DividedResult
 dividedBy num denom = fixSign $ go (abs num) (abs denom) 0
-  where go n d count
-         | d == 0 = DividedByZero
-         | n < d = Result count
-         | otherwise = go (n - d) d (count + 1)
-        fixSign (Result r) = Result (r * signum num * signum denom)
-        fixSign DividedByZero = DividedByZero
+ where
+  go n d count | d == 0    = DividedByZero
+               | n < d     = Result count
+               | otherwise = go (n - d) d (count + 1)
+  fixSign (Result r)    = Result (r * signum num * signum denom)
+  fixSign DividedByZero = DividedByZero
 -- McCarthy 91 function
 mc91 :: Integer -> Integer
-mc91 x
- | x > 100 = x - 10
- | otherwise = mc91(mc91(x + 11))
+mc91 x | x > 100   = x - 10
+       | otherwise = mc91 (mc91 (x + 11))
 -- Numbers into words
 digitToWord :: Int -> String
-digitToWord n
-  | n == 0 = "zero"
-  | n == 1 = "one"
-  | n == 2 = "two"
-  | n == 3 = "three"
-  | n == 4 = "four"
-  | n == 5 = "five"
-  | n == 6 = "six"
-  | n == 7 = "seven"
-  | n == 8 = "eight"
-  | n == 9 = "nine"
-  | otherwise = "more than one digit"
+digitToWord n | n == 0    = "zero"
+              | n == 1    = "one"
+              | n == 2    = "two"
+              | n == 3    = "three"
+              | n == 4    = "four"
+              | n == 5    = "five"
+              | n == 6    = "six"
+              | n == 7    = "seven"
+              | n == 8    = "eight"
+              | n == 9    = "nine"
+              | otherwise = "more than one digit"
 
 digits :: Int -> [Int]
-digits n
-  | n >= 10 = digits(div n 10) ++ [mod n 10]
-  | otherwise = [n]
+digits n | n >= 10   = digits (div n 10) ++ [mod n 10]
+         | otherwise = [n]
 
 wordNumber :: Int -> String
 wordNumber n = concat (intersperse "-" (map digitToWord (digits n)))
