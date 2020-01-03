@@ -1,0 +1,6 @@
+.stack-work/
+*~
+addition/.stack-work/
+morse/.stack-work/
+morse/morse.cabal
+hangman/data
