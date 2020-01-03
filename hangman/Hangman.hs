@@ -2,16 +2,40 @@ module Hangman where
 
 import           Control.Monad                  ( forever )
 import           Data.Char                      ( toLower )
-import           Data.Maybe                     ( isJust )
+import           Data.Maybe                     ( isJust
+                                                , catMaybes
+                                                )
 import           Data.List                      ( intersperse )
 import           System.Exit                    ( exitSuccess )
 import           System.Random                  ( randomRIO )
+import           Test.Hspec
+import           Test.QuickCheck
 
 main :: IO ()
 main = do
   word <- randomWord'
   let puzzle = freshPuzzle (fmap toLower word)
   runGame puzzle
+
+mainTest :: IO ()
+mainTest = hspec $ do
+  describe "fillInCharacter" $ do
+    it "puts a character in the right fields" $ do
+      property $ \x ->
+        let result = fillInCharacter (Puzzle "testable" [] "") x
+        in  if elem x "testable"
+              then result `shouldBe` Puzzle "testable" [Just x] [x]
+              else result `shouldBe` Puzzle "testable" [] [x]
+  describe "handleGuess" $ do
+    it "responds correctly" $ do
+      property $ \x ->
+        let result = handleGuess (Puzzle "testable" [] "") x
+        in  result
+              >>= (\unwrappedResult -> if elem x "testable"
+                    then unwrappedResult
+                      `shouldBe` Puzzle "testable" [Just x] [x]
+                    else unwrappedResult `shouldBe` Puzzle "testable" [] [x]
+                  )
 
 newtype WordList = WordList [String] deriving (Eq, Show)
 
@@ -21,14 +45,22 @@ type DiscoveredLetters = [Maybe Char]
 
 type GuessedLetters = String
 
-data Puzzle = Puzzle TargetWord DiscoveredLetters GuessedLetters
+data Puzzle = Puzzle TargetWord DiscoveredLetters GuessedLetters deriving Eq
 
 data GuessResult = AlreadyGuessed | GuessInWord | GuessNotInWord
 
+-- instance Show Puzzle where
+--   show (Puzzle _ discovered guessed) =
+--     intersperse ' ' (fmap renderPuzzleChar discovered)
+--       ++ " Guessed so far: "
+--       ++ guessed
 instance Show Puzzle where
-  show (Puzzle _ discovered guessed) =
-    intersperse ' ' (fmap renderPuzzleChar discovered)
-      ++ " Guessed so far: "
+  show (Puzzle word discovered guessed) =
+    "Puzzle "
+      ++ word
+      ++ " Discovered "
+      ++ (catMaybes discovered)
+      ++ " Guessed "
       ++ guessed
 
 runGame :: Puzzle -> IO ()
@@ -73,7 +105,7 @@ gameWin (Puzzle targetWord filledInSoFar _) = if all isJust filledInSoFar
   else return ()
 
 guessResult :: Puzzle -> Char -> GuessResult
-guessResult puzzle@(Puzzle tw _ guessed) guess =
+guessResult puzzle@(Puzzle _ _ _) guess =
   case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
     (_    , True) -> AlreadyGuessed
     (True , _   ) -> GuessInWord
@@ -95,9 +127,9 @@ fillInCharacter (Puzzle word filledInSoFar guessed) char = Puzzle
   newFilledInSoFar
   (char : guessed)
  where
-  zipper guessed wordChar guessChar =
-    if wordChar == guessed then Just wordChar else guessChar
-  newFilledInSoFar = zipWith (zipper char) word filledInSoFar
+  newFilledInSoFar = if elem (Just char) filledInSoFar
+    then filledInSoFar
+    else if elem char word then filledInSoFar ++ [Just char] else filledInSoFar
 
 
 alreadyGuessed :: Puzzle -> Char -> Bool
