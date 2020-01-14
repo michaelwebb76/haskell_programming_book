@@ -2,6 +2,7 @@
 
 module HaskellProgrammingChapter17 where
 
+import Control.Applicative (liftA3)
 import Data.List (elemIndex)
 import Test.Hspec
 import Test.QuickCheck
@@ -398,7 +399,7 @@ vowels :: String
 vowels = "aeiou"
 
 combos :: [a] -> [b] -> [c] -> [(a, b, c)]
-combos as bs cs = [(,,)] <*> as <*> bs <*> cs
+combos = liftA3 (,,)
 
 mainCombinations :: IO ()
 mainCombinations =
