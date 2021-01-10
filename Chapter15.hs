@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module HaskellProgrammingChapter15 where
+module Chapter15 where
 
 import Data.Monoid
 import Test.Hspec

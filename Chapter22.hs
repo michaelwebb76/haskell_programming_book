@@ -2,7 +2,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module HaskellProgrammingChapter22 where
+module Chapter22 where
 
 import Control.Applicative
 import Control.Monad (replicateM)

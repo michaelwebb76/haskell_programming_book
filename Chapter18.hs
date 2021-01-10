@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module HaskellProgrammingChapter18 where
+module Chapter18 where
 
 import Control.Monad (join, liftM2)
 import Test.Hspec
@@ -22,7 +22,6 @@ instance Functor (Sum a) where
   fmap f (Second b) = Second (f b)
 
 instance Applicative (Sum a) where
-
   pure = Second
 
   (<*>) (First a) _ = First a
@@ -30,7 +29,6 @@ instance Applicative (Sum a) where
   (<*>) (Second f) (Second a) = Second (f a)
 
 instance Monad (Sum a) where
-
   return = pure
 
   (>>=) (First a) _ = First a
@@ -73,13 +71,11 @@ instance Functor Nope where
   fmap _ _ = NopeDotJpg
 
 instance Applicative Nope where
-
   pure _ = NopeDotJpg
 
   (<*>) _ _ = NopeDotJpg
 
 instance Monad Nope where
-
   return _ = NopeDotJpg
 
   (>>=) _ _ = NopeDotJpg
@@ -99,7 +95,6 @@ instance Functor (PhhhbbtttEither b) where
   fmap f (PLeft a) = PLeft (f a)
 
 instance Applicative (PhhhbbtttEither b) where
-
   pure = PLeft
 
   (<*>) (PRight b) _ = PRight b
@@ -107,7 +102,6 @@ instance Applicative (PhhhbbtttEither b) where
   (<*>) (PLeft f) (PLeft a) = PLeft (f a)
 
 instance Monad (PhhhbbtttEither b) where
-
   return = pure
 
   (>>=) (PRight b) _ = PRight b
@@ -129,13 +123,11 @@ instance Functor Identity where
   fmap f (Identity a) = Identity (f a)
 
 instance Applicative Identity where
-
   pure = Identity
 
   (<*>) (Identity f) (Identity a) = Identity (f a)
 
 instance Monad Identity where
-
   return = pure
 
   (>>=) (Identity a) faToMB = faToMB a
@@ -169,7 +161,6 @@ flatMap :: (a -> List b) -> List a -> List b
 flatMap f = fold (append . f) Nil
 
 instance Applicative List where
-
   pure a = Cons a Nil
 
   (<*>) fs as =
@@ -194,7 +185,6 @@ instance Arbitrary a => Arbitrary (List a) where
       ]
 
 instance Monad List where
-
   return = pure
 
   (>>=) Nil _ = Nil

@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module HaskellProgrammingChapter21 where
+module Chapter21 where
 
 import Control.Applicative (liftA, liftA2, liftA3)
 import Test.Hspec

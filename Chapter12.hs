@@ -1,6 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 
-module HaskellProgrammingChapter12 where
+module Chapter12 where
 -- Chapter Exercises
 
 import           Data.Maybe                     ( fromMaybe )

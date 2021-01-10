@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module HaskellProgrammingChapter16 where
+module Chapter16 where
 
 import Test.Hspec
 import Test.QuickCheck

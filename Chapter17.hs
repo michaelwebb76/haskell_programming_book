@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module HaskellProgrammingChapter17 where
+module Chapter17 where
 
 import Control.Applicative (liftA3)
 import Data.List (elemIndex)
@@ -58,7 +58,6 @@ instance Functor Identity where
   fmap f (Identity a) = Identity (f a)
 
 instance Applicative Identity where
-
   pure = Identity
 
   (<*>) (Identity f) (Identity a) = Identity (f a)
@@ -71,7 +70,6 @@ instance Functor (Constant a) where
   fmap _ (Constant a) = Constant a
 
 instance Monoid a => Applicative (Constant a) where
-
   pure _ = Constant mempty
 
   (<*>) (Constant f) (Constant a) = Constant (f <> a)
@@ -107,7 +105,6 @@ flatMap :: (a -> List b) -> List a -> List b
 flatMap f = fold (append . f) Nil
 
 instance Applicative List where
-
   pure a = Cons a Nil
 
   (<*>) fs as =
@@ -170,7 +167,6 @@ instance Functor ZipList' where
   fmap f (ZipList' xs) = ZipList' $ fmap f xs
 
 instance Applicative ZipList' where
-
   pure a = ZipList' (pure a)
 
   (<*>) (ZipList' listf) (ZipList' lista) = ZipList' (listf <*> lista)
@@ -203,7 +199,6 @@ instance Functor (Validation e) where
   fmap f (VSuccess a) = VSuccess (f a)
 
 instance Monoid e => Applicative (Validation e) where
-
   pure = VSuccess
 
   (<*>) (VFailure a) (VFailure b) = VFailure (a <> b)
@@ -238,7 +233,6 @@ instance EqProp a => EqProp (Pair a) where
   (=-=) (Pair a b) (Pair c d) = (a =-= c) .&. (b =-= d)
 
 instance Applicative Pair where
-
   pure a = Pair a a
 
   (<*>) (Pair f g) (Pair a b) = Pair (f a) (g b)
@@ -257,7 +251,6 @@ instance (EqProp a, EqProp b) => EqProp (Two a b) where
   (=-=) (Two a b) (Two c d) = (a =-= c) .&. (b =-= d)
 
 instance Monoid a => Applicative (Two a) where
-
   pure = Two mempty
 
   (<*>) (Two fa fb) (Two a b) = Two (fa <> a) (fb b)
@@ -277,7 +270,6 @@ instance (EqProp a, EqProp b, EqProp c) => EqProp (Three a b c) where
   (=-=) (Three a b c) (Three d e f) = (a =-= d) .&. (b =-= e) .&. (c =-= f)
 
 instance (Monoid a, Monoid b) => Applicative (Three a b) where
-
   pure = Three mempty mempty
 
   (<*>) (Three fa fb fc) (Three a b c) = Three (fa <> a) (fb <> b) (fc c)
@@ -297,7 +289,6 @@ instance (EqProp a, EqProp b) => EqProp (Three' a b) where
   (=-=) (Three' a b c) (Three' d e f) = (a =-= d) .&. (b =-= e) .&. (c =-= f)
 
 instance Monoid a => Applicative (Three' a) where
-
   pure b = Three' mempty b b
 
   (<*>) (Three' fa fb fc) (Three' a b c) = Three' (fa <> a) (fb b) (fc c)
@@ -318,7 +309,6 @@ instance (EqProp a, EqProp b, EqProp c, EqProp d) => EqProp (Four a b c d) where
   (=-=) (Four a b c d) (Four e f g h) = (a =-= e) .&. (b =-= f) .&. (c =-= g) .&. (d =-= h)
 
 instance (Monoid a, Monoid b, Monoid c) => Applicative (Four a b c) where
-
   pure = Four mempty mempty mempty
 
   (<*>) (Four fa fb fc fd) (Four a b c d) = Four (fa <> a) (fb <> b) (fc <> c) (fd d)
@@ -339,7 +329,6 @@ instance (EqProp a, EqProp b) => EqProp (Four' a b) where
   (=-=) (Four' a b c d) (Four' e f g h) = (a =-= e) .&. (b =-= f) .&. (c =-= g) .&. (d =-= h)
 
 instance Monoid a => Applicative (Four' a) where
-
   pure = Four' mempty mempty mempty
 
   (<*>) (Four' fa fb fc fd) (Four' a b c d) = Four' (fa <> a) (fb <> b) (fc <> c) (fd d)

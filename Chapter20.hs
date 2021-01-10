@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-module HaskellProgrammingChapter20 where
+module Chapter20 where
 
 import Data.Foldable
 import Data.Monoid (Sum)
