@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections #-}
 
@@ -18,7 +19,9 @@ import qualified Data.Map as M
 import Data.Maybe
 import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
+import System.Console.ANSI
 import System.Environment (getArgs)
+import System.Random
 import Web.Scotty.Trans
 
 -- import Prelude
@@ -234,24 +237,17 @@ type Handler = ActionT Text (R.ReaderT Config IO)
 
 bumpBoomp :: Text -> M.Map Text Integer -> (M.Map Text Integer, Integer)
 bumpBoomp k m = do
-  let currentValue = m M.!? k
-      newValue = case currentValue of
-        Nothing ->
-          1
-        Just x ->
-          x + 1
+  let newValue = maybe 1 (+ 1) (m M.!? k)
   (M.insert k newValue m, newValue)
 
 app :: Scotty ()
 app =
   get "/:key" $ do
-    unprefixed <- param "key" :: Handler Text
-    p <- lift $ R.asks prefix
-    let key' = mappend p unprefixed
+    key' <- mappend <$> lift (R.asks prefix) <*> param "key"
     ioRefCounts <- lift $ R.asks counts
-    counts <- lift (R.ReaderT $ \_ -> readIORef ioRefCounts)
+    counts <- liftIO (readIORef ioRefCounts)
     let (newMap, newInteger) = bumpBoomp key' counts
-    lift (R.ReaderT $ \_ -> writeIORef ioRefCounts newMap)
+    liftIO (writeIORef ioRefCounts newMap)
     html $ mconcat ["<h1>Success! Count was: ", TL.pack $ show newInteger, "</h1>"]
 
 hitCounter :: IO ()
@@ -266,25 +262,106 @@ hitCounter = do
 
 data Hand
   = OneFinger
-  | TwoFinger
-  | ThreeFinger
-  | FourFinger
-  | FiveFinger
+  | TwoFingers
+  | ThreeFingers
+  | FourFingers
+  | FiveFingers
+  deriving (Show)
 
-data Call
-  = CallOne
-  | CallTwo
-  | CallThree
-  | CallFour
-  | CallFive
-  | CallSix
-  | CallSeven
-  | CallEight
-  | CallNine
-  | CallTen
+type PlayerName = String
 
-data Turn = Turn Call Hand
+data Turn = Turn PlayerName Hand deriving (Show)
 
-data Game = Game {playerTurn :: Turn, computerTurn :: Turn}
+data Game = Game {player1Turn :: Turn, player2Turn :: Turn} deriving (Show)
 
-data Score = Score {playerScore :: Integer, computerScore :: Integer}
+data Score = Score {player1Score :: Integer, player2Score :: Integer} deriving (Show)
+
+type MorraStateT = StateT Score IO Game
+
+morra :: IO ()
+morra = do
+  putStr "Select 1 to play Computer, 2 to play another Human:"
+  gameChoice <- getLine
+  let score = Score 0 0
+  putStrLn "-- Player 1 is Human"
+  case gameChoice of
+    "1" -> do
+      putStrLn "-- Player 2 is Computer"
+      runStateT humanVsComputerRound score
+    "2" -> do
+      putStrLn "-- Player 2 is Human"
+      runStateT humanVsHumanRound score
+    _ ->
+      error "invalid game mode selected"
+  putStrLn "All done!"
+
+updateScoreFromGame :: Game -> MorraStateT
+updateScoreFromGame game@(Game (Turn player1Name player1Hand) (Turn player2Name player2Hand)) = StateT $ \score ->
+  let pHandInt = handToInt player1Hand
+      cHandInt = handToInt player2Hand
+      pScore = player1Score score
+      cScore = player2Score score
+      updatedScore
+        | pHandInt > cHandInt = Score (pScore + 1) cScore
+        | pHandInt < cHandInt = Score pScore (cScore + 1)
+        | otherwise = score
+   in do
+        liftIO $ putStr (player1Name ++ " played ")
+        liftIO $ print player1Hand
+        liftIO $ putStr (player2Name ++ " played ")
+        liftIO $ print player2Hand
+        liftIO $ print score
+        if player1Score score > player2Score score
+          then putStrLn (player1Name ++ " is winning")
+          else
+            if player2Score score > player1Score score
+              then putStrLn (player2Name ++ " is winning")
+              else putStrLn "It's neck and neck!"
+        return (game, updatedScore)
+
+humanVsComputerRound :: MorraStateT
+humanVsComputerRound = do
+  liftIO $ putStr "Player 1: "
+  playerHand <- liftIO $ intToHand . read <$> getLine
+  computerHand <- liftIO randomComputerHand
+  let game = Game (Turn "Player" playerHand) (Turn "Computer" computerHand)
+  updateScoreFromGame game
+  humanVsComputerRound
+
+humanVsHumanRound :: MorraStateT
+humanVsHumanRound = do
+  liftIO clearScreen
+  liftIO $ putStr "Player 1: "
+  player1Hand <- liftIO $ intToHand . read <$> getLine
+  liftIO $ putStr "Player 2: "
+  player2Hand <- liftIO $ intToHand . read <$> getLine
+  let game = Game (Turn "Player 1" player1Hand) (Turn "Player 2" player2Hand)
+  updateScoreFromGame game
+  liftIO $ putStr "Hit enter/return to continue"
+  liftIO getLine
+  humanVsHumanRound
+
+intToHand :: Int -> Hand
+intToHand = \case
+  1 -> OneFinger
+  2 -> TwoFingers
+  3 -> ThreeFingers
+  4 -> FourFingers
+  5 -> FiveFingers
+  _ -> error "invalid integer"
+
+handToInt :: Hand -> Int
+handToInt = \case
+  OneFinger -> 1
+  TwoFingers -> 2
+  ThreeFingers -> 3
+  FourFingers -> 4
+  FiveFingers -> 5
+
+randomComputerHand :: IO Hand
+randomComputerHand =
+  getStdRandom
+    ( \stdGen ->
+        let (int, stdgen) = randomR (1, 5) stdGen
+         in (intToHand int, stdgen)
+    )

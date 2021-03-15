@@ -10,7 +10,7 @@ import Data.Bits
 import Data.List
 import Data.Maybe
 import Data.Ratio ((%))
-import Data.Word
+import Data.Word (Word16, Word32, Word64)
 import Numeric
 import Test.Hspec
 import Text.Parser.Combinators
